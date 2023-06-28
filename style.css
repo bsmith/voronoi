@@ -1,0 +1,29 @@
+:root {
+    font-size: 1rem;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    outline: 1px dashed rgb(0%,0%,80%);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+#main-canvas {
+    width: 800px;
+    height: 600px;
+    border: 10px solid black;
+}
+
+#messages-output {
+    width: 800px;
+    /* a screen shows 80x25 lines, but let's just have 5 lines of messages */
+    --message-lines: 5;
+    height: calc(600px / 25 * var(--message-lines));
+    border: 10px solid black;
+    border-top-width: 0px;
+}
