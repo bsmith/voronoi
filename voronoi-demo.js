@@ -1,3 +1,6 @@
+/* This is a es2016 module anyway */
+"use strict";
+
 /* load this file with type="module" for defer behaviour */
 main();
 
@@ -15,15 +18,27 @@ function printMessage(message) {
 /* class to manage the fps counter */
 function FpsCounter({ element }) {
     let frameCount = 0;
-    let lastFrameTime = window.performance.now();
+    let maxFrameTimeDelta = 0;
+    let countStartTime = window.performance.now();
+    let lastFrameTime = countStartTime;
     const updateFps = element ? (frameTime) => {
         frameCount++;
+
+        const frameTimeDelta = frameTime - lastFrameTime;
+        lastFrameTime = frameTime;
+        if (frameTimeDelta > maxFrameTimeDelta)
+            maxFrameTimeDelta = frameTimeDelta;
+
+        /* update every 30 frame ie approx twice per second */
         if (frameCount === 30) {
-            const fps = (frameTime - lastFrameTime) / frameCount;
-            element.innerText = fps.toPrecision(3);
+            const fps = (frameCount / (frameTime - countStartTime) * 1000).toPrecision(3);
+            const avg = ((frameTime - countStartTime) / frameCount).toPrecision(3);
+            const max = maxFrameTimeDelta.toPrecision(3);
+            element.innerText = `${fps} fps (avg: ${avg} ms; max: ${max} ms)`;
 
             frameCount = 0;
-            lastFrameTime = frameTime;
+            maxFrameTimeDelta = 0;
+            countStartTime = frameTime;
         }
     } : () => { /* do nothing */ };
 
@@ -32,7 +47,7 @@ function FpsCounter({ element }) {
 }
 
 /* handle clicks */
-let clickLocation = null;
+var clickLocation = null;
 function canvasClickHandler(evt, canvas) {
     // const rect = canvas.getBoundingClientRect();
     // const x = evt.pageX - rect.left;
@@ -41,7 +56,7 @@ function canvasClickHandler(evt, canvas) {
         x: evt.offsetX,
         y: evt.offsetY,
     }
-    printMessage(`clicked at (${clickLocation.x},${clickLocation.y}`);
+    printMessage(`clicked at (${clickLocation.x},${clickLocation.y})`);
 }
 
 function resetClickHandling() {
@@ -49,7 +64,7 @@ function resetClickHandling() {
 }
 
 /* set up the state */
-let state;
+var state;
 function initialiseState() {
     state = {
         points: [],
@@ -66,6 +81,9 @@ function updateState(frameTime) {
 /* redraw the display on a gl context */
 function drawFrame(gl) {
     /* MASSIVE OPENGL BULLSHIT GOES HERE */
+    for (const point of state.points) {
+        drawPoint(point);
+    }
 }
 
 /* entry point */
@@ -91,19 +109,27 @@ function main() {
 
         mainCanvas.addEventListener('click', e => canvasClickHandler(e, mainCanvas));
 
+        let loopHandle;
         const mainLoop = (frameTime) => {
-            window.requestAnimationFrame(mainLoop);
-            fpsCounter.updateFps(frameTime);
-            updateState(frameTime);
-            resetClickHandling();
-            drawFrame(gl);
+            loopHandle = window.requestAnimationFrame(mainLoop);
+            try {
+                fpsCounter.updateFps(frameTime);
+                updateState(frameTime);
+                resetClickHandling();
+                drawFrame(gl);
+            } catch (e) {
+                /* XXX: zombie event handlers are not cleared */
+                printMessage("stopping: " + e);
+                window.cancelAnimationFrame(loopHandle);
+                throw e;
+            }
         };
 
         /* setup and yield to the main loop */
         initialiseState();
         window.setTimeout(mainLoop, 0);
     } catch (e) {
-        printMessage("" + e);
+        printMessage("initialisation failed: " + e);
         throw e;
     }
 }
