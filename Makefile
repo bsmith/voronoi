@@ -28,6 +28,8 @@ build-dir:
 .PHONY: htdocs-dir
 htdocs-dir: build-dir
 	[ -d $(htdocs) ] || mkdir $(htdocs)
+	# XXX path of symlink could be better, or copy
+	[ -e $(htdocs)/node_modules ] || ln -s ../../node_modules/ $(htdocs)/node_modules
 
 $(htdocs)/index.html: $(src)/index.html
 	cp $< $@

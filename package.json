@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "name": "voronoi",
+  "version": "0.1.0",
+  "description": "Voronoi WebGL graphics demo in Typescript",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "make build",
+    "serve": "make serve"
+  },
+  "author": "Benjamin Smith <bsmith@cabbage.org.uk>",
+  "license": "GPL",
+  "dependencies": {
+    "gl-matrix": "^3.4.3"
+  }
+}

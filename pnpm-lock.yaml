@@ -1,0 +1,13 @@
+lockfileVersion: 5.4
+
+specifiers:
+  gl-matrix: ^3.4.3
+
+dependencies:
+  gl-matrix: 3.4.3
+
+packages:
+
+  /gl-matrix/3.4.3:
+    resolution: {integrity: sha512-wcCp8vu8FT22BnvKVPjXa/ICBWRq/zjFfdofZy1WSpQZpphblv12/bOQLBC1rMM7SGOFS9ltVmKOHil5+Ml7gA==}
+    dev: false

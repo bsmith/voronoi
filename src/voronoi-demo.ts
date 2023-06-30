@@ -1,8 +1,13 @@
 /* This is a es2016 module anyway */
 "use strict";
 
+import * as abc from 'gl-matrix';
+
+const v = abc.vec2.fromValues(1, 2);
+console.log(v);
+
 /* load this file with type="module" for defer behaviour */
-main();
+//main();
 
 /* show a message, both to the user and on the console */
 function printMessage(message: string) {
@@ -148,3 +153,5 @@ function main() {
         throw e;
     }
 }
+
+main();
