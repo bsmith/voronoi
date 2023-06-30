@@ -5,23 +5,33 @@
 main();
 
 /* show a message, both to the user and on the console */
-function printMessage(message) {
+function printMessage(message: string) {
     console.log(`message: ${message}`);
     const div = document.createElement("div");
     div.innerText = message;
     const output = document.querySelector("#messages-output");
+    if (output == null)
+        return;
     output.appendChild(div);
     // div.scrollIntoView();
     output.scrollTop = output.scrollHeight;
 }
 
 /* class to manage the fps counter */
-function FpsCounter({ element }) {
+interface FpsCounter {
+    updateFps(frameTime: number): void;
+}
+
+interface FpsCounterConstructor {
+    new(_ : { element: null | HTMLElement }): FpsCounter;
+}
+
+var FpsCounter = function (this: FpsCounter, { element } : { element: null | HTMLElement }) : FpsCounter {
     let frameCount = 0;
     let maxFrameTimeDelta = 0;
     let countStartTime = window.performance.now();
     let lastFrameTime = countStartTime;
-    const updateFps = element ? (frameTime) => {
+    const updateFps = element ? (frameTime: number) => {
         frameCount++;
 
         const frameTimeDelta = frameTime - lastFrameTime;
@@ -44,11 +54,15 @@ function FpsCounter({ element }) {
 
     const methods = { updateFps };
     return Object.assign(new.target ? this : Object.create(FpsCounter.prototype), methods);
-}
+} as any as FpsCounterConstructor;
 
 /* handle clicks */
-var clickLocation = null;
-function canvasClickHandler(evt, canvas) {
+interface ClickLocation {
+    x: number;
+    y: number;
+}
+var clickLocation : null | ClickLocation = null;
+function canvasClickHandler(evt: MouseEvent, canvas: HTMLCanvasElement) {
     // const rect = canvas.getBoundingClientRect();
     // const x = evt.pageX - rect.left;
     // const y = evt.pageY - rect.top;
@@ -64,7 +78,7 @@ function resetClickHandling() {
 }
 
 /* set up the state */
-var state;
+var state: { points: ClickLocation[] };
 function initialiseState() {
     state = {
         points: [],
@@ -72,17 +86,17 @@ function initialiseState() {
 }
 
 /* calculate updated state */
-function updateState(frameTime) {
+function updateState(frameTime: number) {
     if (clickLocation) {
         state.points.push(clickLocation);
     }
 }
 
 /* redraw the display on a gl context */
-function drawFrame(gl) {
+function drawFrame(gl: WebGLRenderingContext) {
     /* MASSIVE OPENGL BULLSHIT GOES HERE */
     for (const point of state.points) {
-        drawPoint(point);
+        // drawPoint(point);
     }
 }
 
@@ -91,7 +105,8 @@ function main() {
     console.log("Hello from voronoi-demo.js");
 
     try {
-        const mainCanvas = document.querySelector("#main-canvas");
+        const mainCanvas: HTMLCanvasElement = document.querySelector("#main-canvas") ??
+            (() => { throw new Error("Couldn't find #main-canvas") })();
         const gl = mainCanvas.getContext("webgl");
 
         if (gl === null) {
@@ -104,13 +119,13 @@ function main() {
         gl.clearColor(0.2588, 0.1294, 0.3882, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        const fpsCounterElement = document.querySelector("#fps-output");
+        const fpsCounterElement : HTMLElement | null = document.querySelector("#fps-output");
         const fpsCounter = new FpsCounter({ element: fpsCounterElement });
 
         mainCanvas.addEventListener('click', e => canvasClickHandler(e, mainCanvas));
 
         let loopHandle;
-        const mainLoop = (frameTime) => {
+        const mainLoop : FrameRequestCallback = (frameTime) => {
             loopHandle = window.requestAnimationFrame(mainLoop);
             try {
                 fpsCounter.updateFps(frameTime);
@@ -127,7 +142,7 @@ function main() {
 
         /* setup and yield to the main loop */
         initialiseState();
-        window.setTimeout(mainLoop, 0);
+        window.setTimeout(() => mainLoop(window.performance.now()), 0);
     } catch (e) {
         printMessage("initialisation failed: " + e);
         throw e;
