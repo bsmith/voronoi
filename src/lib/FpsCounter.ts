@@ -7,9 +7,7 @@ export interface FpsCounterConstructor {
     new(_ : { element: null | HTMLElement }): FpsCounter;
 }
 
-declare var FpsCounter : FpsCounterConstructor;
-export default FpsCounter;
-var FpsCounter = function (this: FpsCounter, { element } : { element: null | HTMLElement }) : FpsCounter {
+const FpsCounter = function (this: FpsCounter, { element } : { element: null | HTMLElement }) : FpsCounter {
     let frameCount = 0;
     let maxFrameTimeDelta = 0;
     let countStartTime = window.performance.now();
@@ -38,3 +36,5 @@ var FpsCounter = function (this: FpsCounter, { element } : { element: null | HTM
     const methods = { updateFps };
     return Object.assign(new.target ? this : Object.create(FpsCounter.prototype), methods);
 } as any as FpsCounterConstructor;
+
+export default FpsCounter;
