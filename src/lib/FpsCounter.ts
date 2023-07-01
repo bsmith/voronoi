@@ -7,7 +7,9 @@ export interface FpsCounterConstructor {
     new(_ : { element: null | HTMLElement }): FpsCounter;
 }
 
-export var FpsCounter = function (this: FpsCounter, { element } : { element: null | HTMLElement }) : FpsCounter {
+declare var FpsCounter : FpsCounterConstructor;
+export default FpsCounter;
+var FpsCounter = function (this: FpsCounter, { element } : { element: null | HTMLElement }) : FpsCounter {
     let frameCount = 0;
     let maxFrameTimeDelta = 0;
     let countStartTime = window.performance.now();

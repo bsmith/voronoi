@@ -1,28 +1,11 @@
 /* This is a es2016 module anyway */
 "use strict";
 
-import { vec2 } from 'gl-matrix';
-
-import { FpsCounter } from './lib/FpsCounter';
-
-const v = vec2.fromValues(1, 2);
-console.log(v);
+import { printMessage } from './lib/messages';
+import FpsCounter from './lib/FpsCounter';
 
 /* load this file with type="module" for defer behaviour */
 //main();
-
-/* show a message, both to the user and on the console */
-function printMessage(message: string) {
-    console.log(`message: ${message}`);
-    const div = document.createElement("div");
-    div.innerText = message;
-    const output = document.querySelector("#messages-output");
-    if (output == null)
-        return;
-    output.appendChild(div);
-    // div.scrollIntoView();
-    output.scrollTop = output.scrollHeight;
-}
 
 /* handle clicks */
 interface ClickLocation {
