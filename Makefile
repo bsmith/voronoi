@@ -25,10 +25,12 @@ clean:
 build: check htdocs
 
 .PHONY: check
-check: build-dir $(build)/tsc/voronoi-demo.js
+# check: build-dir $(build)/tsc/voronoi-demo.js
+check: build-dir tsc-voronoi-demo
 
-.PHONY: htdocs
-htdocs: htdocs-dir $(htdocs)/index.html $(htdocs)/style.css $(htdocs)/voronoi-demo.js $(htdocs)/voronoi-demo.js.map
+.PHONY: htdocs htdocs-copy
+htdocs: htdocs-dir esbuild-voronoi-demo htdocs-copy
+htdocs-copy: $(htdocs)/index.html $(htdocs)/style.css $(htdocs)/voronoi-demo.js $(htdocs)/voronoi-demo.js.map
 
 .PHONY: build-dir
 build-dir:
@@ -52,10 +54,18 @@ $(htdocs)/voronoi-demo.js: $(build)/esbuild/voronoi-demo.js
 $(htdocs)/voronoi-demo.js.map: $(build)/esbuild/voronoi-demo.js.map
 	cp $< $@
 
-$(build)/tsc/voronoi-demo.js \
-$(build)/tsc/voronoi-demo.js.map: $(src)/voronoi-demo.ts
+# $(build)/tsc/voronoi-demo.js \
+# $(build)/tsc/voronoi-demo.js.map: $(src)/voronoi-demo.ts
+.PHONY: tsc-voronoi-demo
+tsc-voronoi-demo:
 	$(TSC) -p tsconfig.voronoi-demo.json
 
-$(build)/esbuild/voronoi-demo.js \
-$(build)/esbuild/voronoi-demo.js.map: $(src)/voronoi-demo.ts
-	$(ESBUILD) --bundle --format=esm --outdir=build/esbuild --sourcemap src/voronoi-demo.ts
+# $(build)/esbuild/voronoi-demo.js \
+# $(build)/esbuild/voronoi-demo.js.map: $(src)/voronoi-demo.ts
+.PHONY: esbuild-voronoi-demo
+esbuild-voronoi-demo:
+#	$(ESBUILD) --bundle --format=esm --outdir=build/esbuild --sourcemap src/voronoi-demo.ts
+	$(ESBUILD) --bundle --format=esm --outfile=build/esbuild/voronoi-demo.js.tmp --sourcemap src/voronoi-demo.ts
+	cmp build/esbuild/voronoi-demo.js.tmp build/esbuild/voronoi-demo.js || \
+		( cp build/esbuild/voronoi-demo.js.tmp build/esbuild/voronoi-demo.js; \
+		cp build/esbuild/voronoi-demo.js.tmp.map build/esbuild/voronoi-demo.js.map )
