@@ -66,6 +66,7 @@ tsc-voronoi-demo:
 esbuild-voronoi-demo:
 #	$(ESBUILD) --bundle --format=esm --outdir=build/esbuild --sourcemap src/voronoi-demo.ts
 	$(ESBUILD) --bundle --format=esm --outfile=build/esbuild/voronoi-demo.js.tmp --sourcemap src/voronoi-demo.ts
+	perl -i -plE's{sourceMappingURL=voronoi-demo.js.tmp.map}{sourceMappingURL=voronoi-demo.js.map}' build/esbuild/voronoi-demo.js.tmp
 	cmp build/esbuild/voronoi-demo.js.tmp build/esbuild/voronoi-demo.js || \
 		( cp build/esbuild/voronoi-demo.js.tmp build/esbuild/voronoi-demo.js; \
 		cp build/esbuild/voronoi-demo.js.tmp.map build/esbuild/voronoi-demo.js.map )
