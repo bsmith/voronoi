@@ -3,6 +3,10 @@
 
 import { printMessage } from './lib/messages';
 import FpsCounter from './lib/FpsCounter';
+import { initShaderProgram }  from './lib/glUtil';
+import { fragmentSrc, vertexSrc } from './lib/shaders';
+import { ProgramInfo, drawScene } from './lib/drawScene';
+import { initBuffers } from './lib/initBuffers';
 
 /* load this file with type="module" for defer behaviour */
 //main();
@@ -70,12 +74,28 @@ function main() {
         gl.clearColor(0.2588, 0.1294, 0.3882, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
+        const shaderProgram = initShaderProgram(gl, vertexSrc, fragmentSrc);
+        const programInfo : ProgramInfo = {
+            program: shaderProgram,
+            attribLocations: {
+                vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+            },
+            uniformLocations: {
+                projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix") as any, // XXX
+                modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix") as any, // XXX
+            }
+        };
+        console.log('programInfo', programInfo);
+
+        const buffers = initBuffers(gl);
+        drawScene(gl, programInfo, buffers);
+
         const fpsCounterElement : HTMLElement | null = document.querySelector("#fps-output");
         const fpsCounter = new FpsCounter({ element: fpsCounterElement });
 
         mainCanvas.addEventListener('click', e => canvasClickHandler(e, mainCanvas));
 
-        let loopHandle;
+        let loopHandle: number;
         const mainLoop : FrameRequestCallback = (frameTime) => {
             loopHandle = window.requestAnimationFrame(mainLoop);
             try {
