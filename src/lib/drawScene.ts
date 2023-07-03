@@ -5,6 +5,7 @@ export interface ProgramInfo {
     program: WebGLProgram,
     attribLocations: {
         vertexPosition: number,
+        vertexColor: number,
     },
     uniformLocations: {
         projectionMatrix: WebGLUniformLocation,
@@ -45,34 +46,36 @@ export function drawScene(gl: WebGLRenderingContext, programInfo: ProgramInfo, b
     // Now move the drawing position a bit to where we want to
     // start drawing the square.
     mat4.translate(
-      modelViewMatrix, // destination matrix
-      modelViewMatrix, // matrix to translate
-      [-0.0, 0.0, -6.0]
+        modelViewMatrix, // destination matrix
+        modelViewMatrix, // matrix to translate
+        [-0.0, 0.0, -6.0]
     ); // amount to translate
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
     setPositionAttribute(gl, buffers, programInfo);
 
+    setColorAttribute(gl, buffers, programInfo);
+
     // Tell WebGL to use our program when drawing
     gl.useProgram(programInfo.program);
 
     // Set the shader uniforms
     gl.uniformMatrix4fv(
-      programInfo.uniformLocations.projectionMatrix,
-      false,
-      projectionMatrix
+        programInfo.uniformLocations.projectionMatrix,
+        false,
+        projectionMatrix
     );
     gl.uniformMatrix4fv(
-      programInfo.uniformLocations.modelViewMatrix,
-      false,
-      modelViewMatrix
+        programInfo.uniformLocations.modelViewMatrix,
+        false,
+        modelViewMatrix
     );
 
     {
-      const offset = 0;
-      const vertexCount = 4;
-      gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
+        const offset = 0;
+        const vertexCount = 4;
+        gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
     }
 }
   
@@ -95,4 +98,24 @@ export function setPositionAttribute(gl: WebGLRenderingContext, buffers: Buffers
         offset
     );
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+}
+
+// Tell WebGL how to pull out the colors from the color buffer
+// into the vertexColor attribute.
+function setColorAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
+    const numComponents = 4;
+    const type = gl.FLOAT;
+    const normalize = false;
+    const stride = 0;
+    const offset = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.color);
+    gl.vertexAttribPointer(
+        programInfo.attribLocations.vertexColor,
+        numComponents,
+        type,
+        normalize,
+        stride,
+        offset
+    );
+    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 }
