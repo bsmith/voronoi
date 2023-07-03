@@ -3,9 +3,9 @@
 
 import { printMessage } from './lib/messages';
 import FpsCounter from './lib/FpsCounter';
-import { drawScene } from './lib/drawScene';
-import { Buffers, initBuffers } from './lib/initBuffers';
-import { ProgramInfo, initProgram } from './lib/initProgram';
+import { drawScene } from './lib/gl/drawScene';
+import { Buffers, initBuffers } from './lib/gl/initBuffers';
+import { ProgramInfo, initProgram } from './lib/gl/initProgram';
 
 /* load this file with type="module" for defer behaviour */
 //main();
