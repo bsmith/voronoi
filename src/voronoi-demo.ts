@@ -3,10 +3,9 @@
 
 import { printMessage } from './lib/messages';
 import FpsCounter from './lib/FpsCounter';
-import { initShaderProgram }  from './lib/glUtil';
-import { fragmentSrc, vertexSrc } from './lib/shaders';
-import { ProgramInfo, drawScene } from './lib/drawScene';
-import { initBuffers } from './lib/initBuffers';
+import { drawScene } from './lib/drawScene';
+import { Buffers, initBuffers } from './lib/initBuffers';
+import { ProgramInfo, initProgram } from './lib/initProgram';
 
 /* load this file with type="module" for defer behaviour */
 //main();
@@ -48,11 +47,19 @@ function updateState(frameTime: number) {
 }
 
 /* redraw the display on a gl context */
-function drawFrame(gl: WebGLRenderingContext) {
+interface DrawFrameContext {
+    gl: WebGLRenderingContext;
+    programInfo: ProgramInfo;
+    buffers: Buffers;
+}
+
+function drawFrame(ctx: DrawFrameContext) {
     /* MASSIVE OPENGL BULLSHIT GOES HERE */
     for (const point of state.points) {
         // drawPoint(point);
     }
+
+    drawScene(ctx.gl, ctx.programInfo, ctx.buffers);
 }
 
 /* entry point */
@@ -74,25 +81,16 @@ function main() {
         gl.clearColor(0.2588, 0.1294, 0.3882, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        const shaderProgram = initShaderProgram(gl, vertexSrc, fragmentSrc);
-        const programInfo : ProgramInfo = {
-            program: shaderProgram,
-            attribLocations: {
-                vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-                vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
-            },
-            uniformLocations: {
-                projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix") as any, // XXX
-                modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix") as any, // XXX
-            }
-        };
+        const programInfo = initProgram(gl);
         console.log('programInfo', programInfo);
 
         const buffers = initBuffers(gl);
-        drawScene(gl, programInfo, buffers);
+        console.log('buffers', buffers);
 
         const fpsCounterElement : HTMLElement | null = document.querySelector("#fps-output");
         const fpsCounter = new FpsCounter({ element: fpsCounterElement });
+
+        const context = { mainCanvas, gl, programInfo, buffers, fpsCounter };
 
         mainCanvas.addEventListener('click', e => canvasClickHandler(e, mainCanvas));
 
@@ -103,7 +101,7 @@ function main() {
                 fpsCounter.updateFps(frameTime);
                 updateState(frameTime);
                 resetClickHandling();
-                drawFrame(gl);
+                drawFrame(context);
             } catch (e) {
                 /* XXX: zombie event handlers are not cleared */
                 printMessage("stopping: " + e);

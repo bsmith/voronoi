@@ -1,17 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { Buffers } from "./initBuffers";
-
-export interface ProgramInfo {
-    program: WebGLProgram,
-    attribLocations: {
-        vertexPosition: number,
-        vertexColor: number,
-    },
-    uniformLocations: {
-        projectionMatrix: WebGLUniformLocation,
-        modelViewMatrix: WebGLUniformLocation,
-    }
-}
+import { ProgramInfo } from "./initProgram";
 
 export function drawScene(gl: WebGLRenderingContext, programInfo: ProgramInfo, buffers: Buffers) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
