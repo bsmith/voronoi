@@ -82,6 +82,18 @@ function main() {
     try {
         const mainCanvas: HTMLCanvasElement = document.querySelector("#main-canvas") ??
             (() => { throw new Error("Couldn't find #main-canvas") })();
+
+        /* XXX frob the dimensions */
+        {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = mainCanvas.getBoundingClientRect();
+            // mainCanvas.width = rect.width * dpr;
+            // mainCanvas.height = rect.height * dpr;
+            mainCanvas.width = mainCanvas.clientWidth * dpr;
+            mainCanvas.height = mainCanvas.clientHeight * dpr;
+            printMessage(`mainCanvas dims: boundingClientRect=(${rect.width}x${rect.height}) clientW/H=(${mainCanvas.clientWidth}x${mainCanvas.clientHeight}) dpr=${dpr} width/height=${mainCanvas.width}x${mainCanvas.height}`);
+        }
+
         const gl = mainCanvas.getContext("webgl");
 
         if (gl === null) {
