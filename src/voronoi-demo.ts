@@ -32,15 +32,28 @@ function resetClickHandling() {
 }
 
 /* set up the state */
-var state: { points: ClickLocation[] };
+interface State {
+    points: ClickLocation[];
+    updateTime: number;
+    squareRotation: number;
+};
+var state: State;
 function initialiseState() {
     state = {
         points: [],
+        updateTime: window.performance.now(),
+        squareRotation: 0,
     };
 }
 
 /* calculate updated state */
 function updateState(frameTime: number) {
+    const deltaTime = frameTime - state.updateTime;
+    state.updateTime = frameTime;
+
+    // 0.0001 radians per millisecond???
+    state.squareRotation += deltaTime * 0.0001;
+
     if (clickLocation) {
         state.points.push(clickLocation);
     }
@@ -59,7 +72,7 @@ function drawFrame(ctx: DrawFrameContext) {
         // drawPoint(point);
     }
 
-    drawScene(ctx.gl, ctx.programInfo, ctx.buffers);
+    drawScene(ctx.gl, ctx.programInfo, ctx.buffers, state.squareRotation);
 }
 
 /* entry point */
