@@ -1,8 +1,8 @@
 import { mat4 } from "gl-matrix";
-import { Buffers } from "./initBuffers";
-import { ProgramInfo } from "./initProgram";
+import { Buffers } from "../initBuffers";
+import { ProgramInfo } from "../initProgram";
 
-export function drawScene(gl: WebGLRenderingContext, programInfo: ProgramInfo, buffers: Buffers, squareRotation: number) {
+export function drawSquareScene(gl: WebGLRenderingContext, programInfo: ProgramInfo, buffers: Buffers, squareRotation: number) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
     gl.enable(gl.DEPTH_TEST); // Enable depth testing

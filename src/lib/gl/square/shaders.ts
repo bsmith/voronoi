@@ -1,3 +1,16 @@
+import { ShaderInfo } from "../initProgram";
+
+export const shaderVariables = {
+    attribs: {
+        vertexPosition: 'aVertexPosition',
+        vertexColor: 'aVertexColor'
+    },
+    uniforms: {
+        modelViewMatrix: 'uModelViewMatrix',
+        projectionMatrix: 'uProjectionMatrix'
+    },
+}
+
 export const vertexSrc = `
     attribute vec4 aVertexPosition;
     attribute vec4 aVertexColor;
@@ -20,3 +33,9 @@ export const fragmentSrc = `
         gl_FragColor = vColor;
     }
 `;
+
+export const squareShadersInfo: ShaderInfo = {
+    shaderVariables,
+    vertexSrc,
+    fragmentSrc
+}

@@ -3,9 +3,10 @@
 
 import { printMessage } from './lib/messages';
 import FpsCounter from './lib/FpsCounter';
-import { drawScene } from './lib/gl/drawScene';
+import { drawSquareScene } from './lib/gl/square/drawScene';
 import { Buffers, initBuffers } from './lib/gl/initBuffers';
 import { ProgramInfo, initProgram } from './lib/gl/initProgram';
+import { squareShadersInfo } from './lib/gl/square/shaders';
 
 /* load this file with type="module" for defer behaviour */
 //main();
@@ -72,7 +73,7 @@ function drawFrame(ctx: DrawFrameContext) {
         // drawPoint(point);
     }
 
-    drawScene(ctx.gl, ctx.programInfo, ctx.buffers, state.squareRotation);
+    drawSquareScene(ctx.gl, ctx.programInfo, ctx.buffers, state.squareRotation);
 }
 
 /* entry point */
@@ -106,7 +107,7 @@ function main() {
         gl.clearColor(0.2588, 0.1294, 0.3882, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        const programInfo = initProgram(gl);
+        const programInfo = initProgram(gl, squareShadersInfo);
         console.log('programInfo', programInfo);
 
         const buffers = initBuffers(gl);

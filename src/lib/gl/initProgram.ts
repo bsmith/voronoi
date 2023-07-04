@@ -1,30 +1,46 @@
-import { fragmentSrc, vertexSrc } from "./shaders";
+export interface ShaderVariables {
+    attribs: { [name:string]: string },
+    uniforms: { [name:string]: string },
+}
+
+export interface ShaderInfo {
+    shaderVariables: ShaderVariables,
+    vertexSrc: string,
+    fragmentSrc: string,
+}
+
+interface AttribLocations {
+    [name: string]: number;
+}
+
+interface UniformLocations {
+    [name: string]: WebGLUniformLocation;
+}
+
+//type foo = keyof ShaderVariables["attribs"];
 
 export interface ProgramInfo {
     program: WebGLProgram,
-    attribLocations: {
-        vertexPosition: number,
-        vertexColor: number,
-    },
-    uniformLocations: {
-        projectionMatrix: WebGLUniformLocation,
-        modelViewMatrix: WebGLUniformLocation,
-    }
+    attribLocations: AttribLocations,
+    uniformLocations: UniformLocations
 }
 
-export function initProgram(gl: WebGLRenderingContext) : ProgramInfo {
-    const shaderProgram = initShaderProgram(gl, vertexSrc, fragmentSrc);
+export function initProgram(gl: WebGLRenderingContext, shaderInfo: ShaderInfo): ProgramInfo {
+    const shaderProgram = initShaderProgram(gl, shaderInfo.vertexSrc, shaderInfo.fragmentSrc);
     const programInfo : ProgramInfo = {
         program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
-            vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix") as any, // XXX
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix") as any, // XXX
-        }
+        attribLocations: {},
+        uniformLocations: {}
     };
+    for (const attribKey in shaderInfo.shaderVariables.attribs) {
+        programInfo.attribLocations[attribKey] = gl.getAttribLocation(shaderProgram, shaderInfo.shaderVariables.attribs[attribKey]);
+    };
+    for (const uniformKey in shaderInfo.shaderVariables.uniforms) {
+        const location = gl.getUniformLocation(shaderProgram, shaderInfo.shaderVariables.uniforms[uniformKey]);
+        if (location === null)
+            throw new Error("initProgram-->gl.getUniformLocation couldn't find attrib");
+        programInfo.uniformLocations[uniformKey] = location;
+    }
     return programInfo;
 }
 
