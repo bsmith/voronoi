@@ -1,32 +1,3 @@
-export interface Buffers {
-    position: WebGLBuffer;
-    color: WebGLBuffer;
-}
-
-const squarePositions = [
-    1.0, 1.0,
-    -1.0, 1.0,
-    1.0, -1.0,
-    -1.0, -1.0
-];
-
-const squareColours = [
-    1.0, 1.0, 1.0, 1.0, // white
-    1.0, 0.0, 0.0, 1.0, // red
-    0.0, 1.0, 0.0, 1.0, // green
-    0.0, 0.0, 1.0, 1.0, // blue
-];
-
-export function initBuffers(gl: WebGLRenderingContext) {
-    const positionBuffer = initArrayBuffer(gl, squarePositions);
-    const colorBuffer = initArrayBuffer(gl, squareColours);
-
-    return {
-        position: positionBuffer,
-        color: colorBuffer
-    };
-}
-
 type toF32ArraySrc = Iterable<number> | Float32Array;
 const toF32Array = (data: toF32ArraySrc) : Float32Array => {
     return data instanceof Float32Array ? data :

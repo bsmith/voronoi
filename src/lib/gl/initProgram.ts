@@ -17,8 +17,6 @@ interface UniformLocations {
     [name: string]: WebGLUniformLocation;
 }
 
-//type foo = keyof ShaderVariables["attribs"];
-
 export interface ProgramInfo {
     program: WebGLProgram,
     attribLocations: AttribLocations,

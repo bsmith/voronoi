@@ -4,9 +4,9 @@
 import { printMessage } from './lib/messages';
 import FpsCounter from './lib/FpsCounter';
 import { drawSquareScene } from './lib/gl/square/drawScene';
-import { Buffers, initBuffers } from './lib/gl/initBuffers';
-import { ProgramInfo, initProgram } from './lib/gl/initProgram';
-import { squareShadersInfo } from './lib/gl/square/shaders';
+import { ProgramInfo } from './lib/gl/initProgram';
+import { SquareBuffers } from './lib/gl/square/buffers';
+import { SquareContext, initSquareContext } from './lib/gl/square/initScene';
 
 /* load this file with type="module" for defer behaviour */
 //main();
@@ -63,8 +63,7 @@ function updateState(frameTime: number) {
 /* redraw the display on a gl context */
 interface DrawFrameContext {
     gl: WebGLRenderingContext;
-    programInfo: ProgramInfo;
-    buffers: Buffers;
+    squareContext: SquareContext;
 }
 
 function drawFrame(ctx: DrawFrameContext) {
@@ -73,7 +72,7 @@ function drawFrame(ctx: DrawFrameContext) {
         // drawPoint(point);
     }
 
-    drawSquareScene(ctx.gl, ctx.programInfo, ctx.buffers, state.squareRotation);
+    drawSquareScene(ctx.squareContext, state.squareRotation);
 }
 
 /* entry point */
@@ -107,16 +106,13 @@ function main() {
         gl.clearColor(0.2588, 0.1294, 0.3882, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        const programInfo = initProgram(gl, squareShadersInfo);
-        console.log('programInfo', programInfo);
-
-        const buffers = initBuffers(gl);
-        console.log('buffers', buffers);
+        const squareContext = initSquareContext(gl);
+        console.log('square', squareContext);
 
         const fpsCounterElement : HTMLElement | null = document.querySelector("#fps-output");
         const fpsCounter = new FpsCounter({ element: fpsCounterElement });
 
-        const context = { mainCanvas, gl, programInfo, buffers, fpsCounter };
+        const context = { mainCanvas, gl, squareContext, fpsCounter };
 
         mainCanvas.addEventListener('click', e => canvasClickHandler(e, mainCanvas));
 

@@ -1,8 +1,9 @@
 import { mat4 } from "gl-matrix";
-import { Buffers } from "../initBuffers";
 import { ProgramInfo } from "../initProgram";
+import { SquareBuffers } from "./buffers";
+import { SquareContext } from "./initScene";
 
-export function drawSquareScene(gl: WebGLRenderingContext, programInfo: ProgramInfo, buffers: Buffers, squareRotation: number) {
+export function drawSquareScene({gl, buffers, programInfo}: SquareContext, squareRotation: number) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Clear to black, fully opaque
     gl.clearDepth(1.0); // Clear everything
     gl.enable(gl.DEPTH_TEST); // Enable depth testing
@@ -77,7 +78,7 @@ export function drawSquareScene(gl: WebGLRenderingContext, programInfo: ProgramI
   
 // Tell WebGL how to pull out the positions from the position
 // buffer into the vertexPosition attribute.
-export function setPositionAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
+export function setPositionAttribute(gl: WebGLRenderingContext, buffers: SquareBuffers, programInfo: ProgramInfo) {
     const numComponents = 2; // pull out 2 values per iteration
     const type = gl.FLOAT; // the data in the buffer is 32bit floats
     const normalize = false; // don't normalize
@@ -98,7 +99,7 @@ export function setPositionAttribute(gl: WebGLRenderingContext, buffers: Buffers
 
 // Tell WebGL how to pull out the colors from the color buffer
 // into the vertexColor attribute.
-function setColorAttribute(gl: WebGLRenderingContext, buffers: Buffers, programInfo: ProgramInfo) {
+function setColorAttribute(gl: WebGLRenderingContext, buffers: SquareBuffers, programInfo: ProgramInfo) {
     const numComponents = 4;
     const type = gl.FLOAT;
     const normalize = false;
