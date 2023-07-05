@@ -26,6 +26,7 @@ function canvasClickHandler(evt: MouseEvent, canvas: HTMLCanvasElement) {
         y: evt.offsetY,
     }
     printMessage(`clicked at (${clickLocation.x},${clickLocation.y})`);
+    console.log(`click (${clickLocation.x},${clickLocation.y})`, evt);
 }
 
 function resetClickHandling() {
