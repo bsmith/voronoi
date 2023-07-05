@@ -79,7 +79,7 @@ export function loadShader(gl: WebGLRenderingContext, type: number, source: stri
         throw new Error("loadShader-->gl.createShader() failed");
 
     // Send the source to the shader object
-    gl.shaderSource(shader, source);
+    gl.shaderSource(shader, source.trim());
 
     // Compile the shader program
     gl.compileShader(shader);
@@ -92,6 +92,11 @@ export function loadShader(gl: WebGLRenderingContext, type: number, source: stri
         gl.deleteShader(shader);
         throw e;
     }
+
+    const translated = (gl
+        .getExtension("WEBGL_debug_shaders") as WEBGL_debug_shaders)
+        .getTranslatedShaderSource(shader);
+    console.log(`compiled shader`, source, translated);
 
     return shader;
 }

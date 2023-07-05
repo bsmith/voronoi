@@ -7,6 +7,8 @@ import { drawSquareScene } from './lib/gl/square/drawScene';
 import { ProgramInfo } from './lib/gl/initProgram';
 import { SquareBuffers } from './lib/gl/square/buffers';
 import { SquareContext, initSquareContext } from './lib/gl/square/initScene';
+import { PointContext, initPointContext } from './lib/gl/point/initScene';
+import { drawPointScene } from './lib/gl/point/drawScene';
 
 /* load this file with type="module" for defer behaviour */
 //main();
@@ -65,6 +67,7 @@ function updateState(frameTime: number) {
 interface DrawFrameContext {
     gl: WebGLRenderingContext;
     squareContext: SquareContext;
+    pointContext: PointContext;
 }
 
 function drawFrame(ctx: DrawFrameContext) {
@@ -74,6 +77,11 @@ function drawFrame(ctx: DrawFrameContext) {
     }
 
     drawSquareScene(ctx.squareContext, state.squareRotation);
+
+    let pointPos = {x: 400-.5, y: 300-.5};
+    if (state.points.length > 0)
+        pointPos = state.points[state.points.length-1];
+    drawPointScene(ctx.pointContext, pointPos);
 }
 
 /* entry point */
@@ -110,10 +118,14 @@ function main() {
         const squareContext = initSquareContext(gl);
         console.log('square', squareContext);
 
+        const pointContext = initPointContext(gl);
+        console.log('point', pointContext);
+
         const fpsCounterElement : HTMLElement | null = document.querySelector("#fps-output");
         const fpsCounter = new FpsCounter({ element: fpsCounterElement });
 
-        const context = { mainCanvas, gl, squareContext, fpsCounter };
+        const context = { mainCanvas, gl, squareContext, pointContext, fpsCounter };
+        // eval(`window.DEBUG??={};window.DEBUG.context=context;`);
 
         mainCanvas.addEventListener('click', e => canvasClickHandler(e, mainCanvas));
 
